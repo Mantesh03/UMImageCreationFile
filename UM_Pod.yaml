@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: um-pv1-pod
+  lables:
+     name: um-pv1-pod
+     app: universalmessaging-app
+spec:
+  containers:
+    - name: um-pv1-cn
+      image: mantesh03/dockerhub:um-image
+      ports:
+        - containerPort: 9000
+          name: nsp
+      volumeMounts:
+        - mountPath: /opt/softwareag/UniversalMessaging/server/umserver/data
+          name: um-pv1-data
+  volumes:
+    - name: um-pv1-data
+      persistentVolumeClaim:
+        claimName: pv1-claim

@@ -1,0 +1,45 @@
+#Separate for each type
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myumdeployment
+  labels:
+    app: umserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umserver
+  template:
+    spec:
+      containers:
+      -  name: myumcn
+         image: mantesh03/dockerhub:um-image
+         volumeMounts:
+         -  name: server-common
+            mountPath: /opt/softwareag/UniversalMessaging/server/umserver/licence/licence.xml
+            subPath: licence.xml
+            #readOnly: false
+         envFrom:
+         -  configMapRef:
+              name: myumconfigkey1
+         env:
+         -  name: REALM_NAME
+            valueFrom:
+              configMapKeyRef:
+                 name: myumconfigkey2
+                 key: REALM_NAME
+         ports:
+         -  name: nsp 
+            containerPort: 9000
+      volumes:
+      -  name: server-common
+         configMap:
+          name: myumconfigfile
+          items:
+            - key: licence-um.xml
+              path: licence.xml
+          #defaultMode: 0777     
+    metadata:
+      labels:
+        app: umserver

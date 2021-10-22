@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: um-server-deploy
+  labels:
+    name: um-server-deploy
+    component: universal-messaging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: universal-messaging
+      app: feedback
+  template:
+    metadata:
+      name: um-server-pod
+      labels:
+        component: universal-messaging
+        app: feedback
+    spec:
+      containers:
+      -  name: um-server-container
+         image: store/softwareag/universalmessaging-server:10.3.0.17
+         volumeMounts:
+            # Path for the container file system running inside pod.
+         -  mountPath: /opt/softwareag/UniversalMessaging/server/umserver/data
+            #Name of this mount
+            name: um-data-directory
+         ports:
+         -  name: nsp
+            containerPort: 9000
+      volumes:
+      -  name: um-data-directory
+         hostPath:
+           # Directory location on host (Shoulde be created before deployment with proper rights)
+           path: /opt/umData
+           # This field is optional
+           type: DirectoryOrCreate
